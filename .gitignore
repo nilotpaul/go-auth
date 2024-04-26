@@ -1,0 +1,7 @@
+bin
+.env
+.env.*
+*.pem
+private_key.pem
+public_key.pem
+cert
