@@ -1,10 +1,11 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/nilotpaul/go-api/types"
-	"github.com/nilotpaul/go-api/utils"
+	"github.com/nilotpaul/go-auth/types"
+	"github.com/nilotpaul/go-auth/utils"
 )
 
 type UserHandler struct {
@@ -16,5 +17,7 @@ func HandleUser(store types.UserStore) *UserHandler {
 }
 
 func (h *UserHandler) GetSensitiveInfo(w http.ResponseWriter, r *http.Request) {
-	utils.WriteJSON(w, http.StatusOK, "OK")
+	uID := utils.GetUserFromCtx(r)
+
+	utils.WriteJSON(w, http.StatusOK, fmt.Sprintf("user id is %s", uID))
 }

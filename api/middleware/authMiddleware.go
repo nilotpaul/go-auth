@@ -5,20 +5,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/nilotpaul/go-api/config"
-	"github.com/nilotpaul/go-api/types"
-	"github.com/nilotpaul/go-api/utils"
+	"github.com/nilotpaul/go-auth/config"
+	"github.com/nilotpaul/go-auth/utils"
 )
 
 type AuthMiddleware struct {
-	types.UserStore
 	Cfg *config.Config
 }
 
-func NewAuthMiddleware(store types.UserStore, Cfg *config.Config) *AuthMiddleware {
+func NewAuthMiddleware(cfg *config.Config) *AuthMiddleware {
 	return &AuthMiddleware{
-		UserStore: store,
-		Cfg:       Cfg,
+		Cfg: cfg,
 	}
 }
 

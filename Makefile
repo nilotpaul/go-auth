@@ -1,8 +1,8 @@
 build:
-	@go build -o bin/go-api cmd/main.go
+	@go build -o bin/go-auth cmd/main.go
 
 run: build
-	@./bin/go-api
+	@./bin/go-auth
 
 watch:
 	@reflex -r '\.go$$' -s -- make run

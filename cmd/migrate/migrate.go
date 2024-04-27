@@ -6,8 +6,8 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	"github.com/nilotpaul/go-api/config"
-	store "github.com/nilotpaul/go-api/internal/store/db"
+	"github.com/nilotpaul/go-auth/config"
+	store "github.com/nilotpaul/go-auth/internal/store/db"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"

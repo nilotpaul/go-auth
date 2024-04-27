@@ -1,4 +1,4 @@
-module github.com/nilotpaul/go-api
+module github.com/nilotpaul/go-auth
 
 go 1.18
 

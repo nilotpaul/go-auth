@@ -7,7 +7,7 @@ import (
 
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
-	GetUserByEmailWithPass(email string) (*UserWithPassword, error)
+	GetUserByEmailWithPassword(email string) (*UserWithPassword, error)
 	GetUserByUsername(username string) (*User, error)
 	GetUserByToken(r *http.Request) (*UserWithRefreshToken, error)
 	CreateUser(user RegisterPayload) error

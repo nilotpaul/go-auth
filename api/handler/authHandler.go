@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/nilotpaul/go-api/config"
-	"github.com/nilotpaul/go-api/types"
-	"github.com/nilotpaul/go-api/utils"
+	"github.com/nilotpaul/go-auth/config"
+	"github.com/nilotpaul/go-auth/types"
+	"github.com/nilotpaul/go-auth/utils"
 )
 
 type AuthHandler struct {
@@ -35,7 +35,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.UserStore.GetUserByEmailWithPass(payload.Email)
+	u, err := h.UserStore.GetUserByEmailWithPassword(payload.Email)
 
 	if err != nil || u.ID == nil {
 		utils.WriteJSON(w, http.StatusNotFound, "user not found")

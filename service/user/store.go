@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/nilotpaul/go-api/types"
-	"github.com/nilotpaul/go-api/utils"
+	"github.com/nilotpaul/go-auth/types"
+	"github.com/nilotpaul/go-auth/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -37,7 +37,7 @@ func (us *UserStore) GetUserByEmail(email string) (*types.User, error) {
 	return u, nil
 }
 
-func (us *UserStore) GetUserByEmailWithPass(email string) (*types.UserWithPassword, error) {
+func (us *UserStore) GetUserByEmailWithPassword(email string) (*types.UserWithPassword, error) {
 	rows, err := us.db.Query("SELECT id, email, username, hashed_password, created_at, updated_at FROM users WHERE email = $1", email)
 
 	if err != nil {

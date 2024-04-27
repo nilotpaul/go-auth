@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	api "github.com/nilotpaul/go-api/api/routes"
-	"github.com/nilotpaul/go-api/config"
-	service "github.com/nilotpaul/go-api/service/user"
+	api "github.com/nilotpaul/go-auth/api/route"
+	"github.com/nilotpaul/go-auth/config"
+	service "github.com/nilotpaul/go-auth/service/user"
 )
 
 type APIServer struct {

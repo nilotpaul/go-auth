@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	api "github.com/nilotpaul/go-api/api/handlers"
-	middleware "github.com/nilotpaul/go-api/api/middlewares"
-	"github.com/nilotpaul/go-api/config"
-	"github.com/nilotpaul/go-api/types"
+	api "github.com/nilotpaul/go-auth/api/handler"
+	middleware "github.com/nilotpaul/go-auth/api/middleware"
+	"github.com/nilotpaul/go-auth/config"
+	"github.com/nilotpaul/go-auth/types"
 )
 
 type Handler struct {
@@ -26,7 +26,12 @@ func (h *Handler) RegisterRoutes(r *mux.Router) {
 	authApi := api.HandleAuth(h.UserStore, h.Cfg)
 	userApi := api.HandleUser(h.UserStore)
 
-	authMiddleware := middleware.NewAuthMiddleware(h.UserStore, h.Cfg)
+	// ratelimiter := pkg.NewRateLimiter(5, time.Minute)
+
+	authMiddleware := middleware.NewAuthMiddleware(h.Cfg)
+	// rateLimiMiddleware := middleware.NewRateLimitMiddleware(ratelimiter)
+
+	// r.Use(rateLimiMiddleware.WithRateLimit)
 
 	r.HandleFunc("/login", authMiddleware.WithoutAuth(authApi.Login)).Methods(http.MethodPost)
 	r.HandleFunc("/register", authMiddleware.WithoutAuth(authApi.Register)).Methods(http.MethodPost)
