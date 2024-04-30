@@ -7,7 +7,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/nilotpaul/go-auth/config"
-	store "github.com/nilotpaul/go-auth/internal/store/db"
+	"github.com/nilotpaul/go-auth/internal/store/db"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
@@ -16,7 +16,7 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
-	db, _ := store.NewDBStore(store.DBConfig{
+	db, _ := db.NewDBStore(db.DBConfig{
 		Name:     cfg.DBName,
 		User:     cfg.DBUser,
 		Password: cfg.DBPassword,

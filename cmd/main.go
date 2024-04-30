@@ -5,13 +5,15 @@ import (
 
 	"github.com/nilotpaul/go-auth/api"
 	"github.com/nilotpaul/go-auth/config"
-	store "github.com/nilotpaul/go-auth/internal/store/db"
+	"github.com/nilotpaul/go-auth/internal/store/db"
 )
+
+const envPath string = "./.env"
 
 func main() {
 	cfg := config.LoadConfig()
 
-	db, err := store.NewDBStore(store.DBConfig{
+	db, err := db.NewDBStore(db.DBConfig{
 		Name:     cfg.DBName,
 		User:     cfg.DBUser,
 		Password: cfg.DBPassword,

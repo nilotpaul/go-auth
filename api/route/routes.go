@@ -1,11 +1,11 @@
-package api
+package route
 
 import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	api "github.com/nilotpaul/go-auth/api/handler"
-	middleware "github.com/nilotpaul/go-auth/api/middleware"
+	"github.com/nilotpaul/go-auth/api/handler"
+	"github.com/nilotpaul/go-auth/api/middleware"
 	"github.com/nilotpaul/go-auth/config"
 	"github.com/nilotpaul/go-auth/types"
 )
@@ -23,8 +23,8 @@ func NewHandler(store types.UserStore, cfg *config.Config) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(r *mux.Router) {
-	authApi := api.HandleAuth(h.UserStore, h.Cfg)
-	userApi := api.HandleUser(h.UserStore)
+	authApi := handler.HandleAuth(h.UserStore, h.Cfg)
+	userApi := handler.HandleUser(h.UserStore)
 
 	// ratelimiter := pkg.NewRateLimiter(5, time.Minute)
 

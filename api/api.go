@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	api "github.com/nilotpaul/go-auth/api/route"
 	"github.com/nilotpaul/go-auth/config"
-	service "github.com/nilotpaul/go-auth/service/user"
+	user "github.com/nilotpaul/go-auth/service/user"
 )
 
 type APIServer struct {
@@ -29,7 +29,7 @@ func (s *APIServer) Run() error {
 	router := mux.NewRouter()
 	subRouter := router.PathPrefix("/api/v1").Subrouter()
 
-	userStore := service.NewUserStore(s.db)
+	userStore := user.NewUserStore(s.db)
 
 	apiHandler := api.NewHandler(userStore, s.cfg)
 	apiHandler.RegisterRoutes(subRouter)
