@@ -54,7 +54,7 @@ func getErrorMessage(valErr validator.FieldError) *FieldError {
 	case "eqfield":
 		return &FieldError{
 			Field: valErr.Field(),
-			Error: "input do no match",
+			Error: "input do not match",
 		}
 	case "email":
 		return &FieldError{

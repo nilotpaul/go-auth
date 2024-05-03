@@ -28,11 +28,6 @@ func TestLoginRoute(t *testing.T) {
 		Port:           "3000",
 		PrivateKeyPath: "../../cert/private_key.pem",
 		PublicKeyPath:  "../../cert/public_key.pem",
-		DBPassword:     "",
-		DBUser:         "",
-		DBName:         "",
-		DBHost:         "",
-		DBPort:         "",
 	}
 	userStore := &mockUserStore{}
 
@@ -84,6 +79,7 @@ func TestLoginRoute(t *testing.T) {
 		assert.Equal(t, "\"user not found\"\n", resp)
 	})
 
+	// Test case: incorrect password
 	t.Run("should fail if password is incorrect", func(t *testing.T) {
 		user := &types.LoginPayload{
 			Email:    "test@gmail.com",
@@ -102,6 +98,7 @@ func TestLoginRoute(t *testing.T) {
 		assert.Equal(t, "\"invalid credentials\"\n", resp)
 	})
 
+	// Test case: valid login
 	t.Run("should log the user in", func(t *testing.T) {
 		user := &types.LoginPayload{
 			Email:    "test@gmail.com",
@@ -124,9 +121,123 @@ func TestLoginRoute(t *testing.T) {
 	})
 
 }
+func TestRegisterRoute(t *testing.T) {
+	cfg := &config.Config{
+		Port:           "3000",
+		PrivateKeyPath: "../../cert/private_key.pem",
+		PublicKeyPath:  "../../cert/public_key.pem",
+	}
+	userStore := &mockUserStore{}
+
+	h := route.NewHandler(userStore, cfg)
+	authApi := handler.HandleAuth(h.UserStore, h.Cfg)
+
+	r := mux.NewRouter()
+	h.RegisterRoutes(r)
+
+	// Test case: invalid email
+	t.Run("should fail if the email is invalid", func(t *testing.T) {
+		user := &types.RegisterPayload{
+			Email:           "testgmail.com",
+			Username:        "test",
+			Password:        "123456",
+			ConfirmPassword: "123456",
+		}
+		payload, _ := json.Marshal(user)
+
+		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(payload))
+		rr := httptest.NewRecorder()
+
+		authApi.Register(rr, req)
+
+		var res utils.FieldError
+		if err := json.Unmarshal(rr.Body.Bytes(), &res); err != nil {
+			log.Println(err)
+		}
+
+		assert.Equal(t, http.StatusUnprocessableEntity, rr.Code)
+		assert.Equal(t, "invalid email", res.Error)
+		assert.Equal(t, "Email", res.Field)
+	})
+
+	// Test case: different password and confirm password
+	t.Run("should fail if the passwords dosen't match", func(t *testing.T) {
+		user := &types.RegisterPayload{
+			Email:           "test@gmail.com",
+			Username:        "test",
+			Password:        "123456",
+			ConfirmPassword: "123457",
+		}
+		payload, _ := json.Marshal(user)
+
+		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(payload))
+		rr := httptest.NewRecorder()
+
+		authApi.Register(rr, req)
+
+		var res utils.FieldError
+		if err := json.Unmarshal(rr.Body.Bytes(), &res); err != nil {
+			log.Println(err)
+		}
+
+		assert.Equal(t, http.StatusUnprocessableEntity, rr.Code)
+		assert.Equal(t, "input do not match", res.Error)
+		assert.Equal(t, "ConfirmPassword", res.Field)
+	})
+
+	// Test case: Already registrered
+	t.Run("should fail if the user is already registered", func(t *testing.T) {
+		user := &types.RegisterPayload{
+			Email:           "alreadyregistered@gmail.com",
+			Username:        "test",
+			Password:        "123456",
+			ConfirmPassword: "123456",
+		}
+		payload, _ := json.Marshal(user)
+
+		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(payload))
+		rr := httptest.NewRecorder()
+
+		authApi.Register(rr, req)
+
+		assert.Equal(t, http.StatusConflict, rr.Code)
+		assert.Equal(t, "\"account already exists\"\n", rr.Body.String())
+	})
+
+	// Test case: username already taken
+	t.Run("should fail if the username is taken", func(t *testing.T) {
+		user := &types.RegisterPayload{
+			Email:           "unregistred@gmail.com",
+			Username:        "taken",
+			Password:        "123456",
+			ConfirmPassword: "123456",
+		}
+		payload, _ := json.Marshal(user)
+
+		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewBuffer(payload))
+		rr := httptest.NewRecorder()
+		log.Println("body data", rr.Body.String())
+
+		authApi.Register(rr, req)
+
+		assert.Equal(t, http.StatusConflict, rr.Code)
+
+	})
+}
 
 func (us *mockUserStore) GetUserByEmail(email string) (*types.User, error) {
-	return nil, nil
+
+	if email == "alreadyregistered@gmail.com" {
+		return &types.User{
+			ID:         []uint8("test_user_id"),
+			Email:      email,
+			Username:   "test",
+			Created_at: time.Now(),
+			Updated_at: time.Now(),
+		}, nil
+	}
+
+	return nil, fmt.Errorf("user not found")
 }
 
 func (us *mockUserStore) GetUserByEmailWithPassword(email string) (*types.UserWithPassword, error) {
@@ -143,7 +254,7 @@ func (us *mockUserStore) GetUserByEmailWithPassword(email string) (*types.UserWi
 	u := &types.UserWithPassword{
 		User: types.User{
 			ID:         []uint8("test_user_id"),
-			Email:      "test@gmail.com",
+			Email:      email,
 			Username:   "test",
 			Created_at: time.Now(),
 			Updated_at: time.Now(),
@@ -155,7 +266,17 @@ func (us *mockUserStore) GetUserByEmailWithPassword(email string) (*types.UserWi
 }
 
 func (us *mockUserStore) GetUserByUsername(username string) (*types.User, error) {
-	return nil, nil
+	if username == "taken" {
+		return &types.User{
+			ID:         []uint8("test_user_id"),
+			Email:      "test@gmail.com",
+			Username:   username,
+			Created_at: time.Now(),
+			Updated_at: time.Now(),
+		}, nil
+	}
+
+	return nil, fmt.Errorf("user not found")
 }
 
 func (us *mockUserStore) GetUserByToken(r *http.Request) (*types.UserWithRefreshToken, error) {

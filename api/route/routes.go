@@ -26,12 +26,7 @@ func (h *Handler) RegisterRoutes(r *mux.Router) {
 	authApi := handler.HandleAuth(h.UserStore, h.Cfg)
 	userApi := handler.HandleUser(h.UserStore)
 
-	// ratelimiter := pkg.NewRateLimiter(5, time.Minute)
-
 	authMiddleware := middleware.NewAuthMiddleware(h.Cfg)
-	// rateLimiMiddleware := middleware.NewRateLimitMiddleware(ratelimiter)
-
-	// r.Use(rateLimiMiddleware.WithRateLimit)
 
 	r.HandleFunc("/login", authMiddleware.WithoutAuth(authApi.Login)).Methods(http.MethodPost)
 	r.HandleFunc("/register", authMiddleware.WithoutAuth(authApi.Register)).Methods(http.MethodPost)

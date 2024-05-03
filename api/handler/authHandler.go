@@ -82,24 +82,15 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.UserStore.GetUserByEmail(payload.Email)
-
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	u, _ := h.UserStore.GetUserByEmail(payload.Email)
 
 	if u.ID != nil {
+		log.Println("user is there", u)
 		utils.WriteJSON(w, http.StatusConflict, "account already exists")
 		return
 	}
 
-	u, err = h.UserStore.GetUserByUsername(payload.Username)
-
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err.Error())
-		return
-	}
+	u, _ = h.UserStore.GetUserByUsername(payload.Username)
 
 	if u.ID != nil {
 		utils.WriteJSON(w, http.StatusConflict, "username is taken")
